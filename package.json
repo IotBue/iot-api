@@ -1,0 +1,16 @@
+{
+  "name": "raspberry-api",
+  "version": "1.0.0",
+  "description": "Simple node.js API for raspberrypi",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "author": "CRANIO",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.15.0",
+    "express": "^4.13.4",
+    "mongoose": "^4.4.12"
+  }
+}
