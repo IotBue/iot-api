@@ -4,7 +4,7 @@ var Raspi      = require('../models/raspi');
 var Sensor     = require('../models/sensor');
 var SensorData = require('../models/sensorData');
 
-// POST /api/raspi
+// POST /api/raspis
 router.post('/raspis', function(request, response) {
   raspi = new Raspi();
   raspi.model = request.body.model;
@@ -74,7 +74,6 @@ router.post('/raspis/:raspi_id/sensors', function(request, response) {
 });
 
 // GET /raspis/:raspi_id/sensors/:sensor_id
-
 router.get('/raspis/:raspi_id/sensors/:sensor_id', function(request, response) {
   Raspi.findById(request.params.raspi_id, function(error, raspi) {
     if (error) {
@@ -100,7 +99,6 @@ router.get('/raspis/:raspi_id/sensors/:sensor_id', function(request, response) {
   });
 });
 
-
 // POST /raspis/:raspi_id/sensors/:sensor_id/sensors_data
 router.post('/raspis/:raspi_id/sensors/:sensor_id/sensors_data', function(request, response) {
   var sensorData = new SensorData();
@@ -121,19 +119,6 @@ router.post('/raspis/:raspi_id/sensors/:sensor_id/sensors_data', function(reques
         });
       });
     }
-  });
-});
-
-router.delete('/remove_all', function(request, response) {
-  SensorData.remove({}, function(error, sensorData) {
-    console.log("removed");
-  });
-  Sensor.remove({}, function(error, sensor) {
-    console.log("removed");
-  });
-  Raspi.remove({}, function(error, raspi) {
-    console.log("remove");
-    response.send(raspi);
   });
 });
 
