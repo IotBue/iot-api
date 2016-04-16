@@ -1,12 +1,14 @@
-var express = require('express');
-var router  = express.Router();
-var Raspi   = require('../models/raspi');
-var Sensor  = require('../models/sensor');
+var express    = require('express');
+var router     = express.Router();
+var Raspi      = require('../models/raspi');
+var Sensor     = require('../models/sensor');
+var SensorData = require('../models/sensorData');
 
 // POST /api/raspi
 router.post('/raspis', function(request, response) {
   raspi = new Raspi();
   raspi.model = request.body.model;
+  raspi.active = request.body.active;
   raspi.save(function(error, raspi) {
     if (error) {
       response.send(error);
@@ -34,7 +36,7 @@ router.get('/raspis', function(request, response) {
   });
 });
 
-// GET /api/sensors
+// GET /api/:raspi_id/sensors
 router.get('/raspis/:raspi_id/sensors', function(request, response) {
   Raspi.findById(request.params.raspi_id, function(error, raspi) {
     if (error) {
@@ -71,9 +73,9 @@ router.post('/raspis/:raspi_id/sensors', function(request, response) {
   });
 });
 
-// GET /raspis/:raspi_id/sensors/:sensor_id/sensor_data
+// GET /raspis/:raspi_id/sensors/:sensor_id
 
-router.get('/raspis/:raspi_id/sensors/:sensor_id/sensor_data', function(request, response) {
+router.get('/raspis/:raspi_id/sensors/:sensor_id', function(request, response) {
   Raspi.findById(request.params.raspi_id, function(error, raspi) {
     if (error) {
       response.send(error)
@@ -86,7 +88,7 @@ router.get('/raspis/:raspi_id/sensors/:sensor_id/sensor_data', function(request,
           if (error) {
             response.send(error);
           } else {
-            sensor.populate('sensorData', function(error, sensor){
+            sensor.populate('sensorData', function(error, sensor) {
               response.send(sensor);
             });
           }
@@ -95,6 +97,43 @@ router.get('/raspis/:raspi_id/sensors/:sensor_id/sensor_data', function(request,
         response.json({ message: 'No hay un sensor con ese ID en la raspi'});
       }
     }
+  });
+});
+
+
+// POST /raspis/:raspi_id/sensors/:sensor_id/sensors_data
+router.post('/raspis/:raspi_id/sensors/:sensor_id/sensors_data', function(request, response) {
+  var sensorData = new SensorData();
+  sensorData.value = request.body.value;
+  sensorData.sentAt = request.body.sentAt;
+  sensorData.save(function(error, sensorData) {
+    if (error) {
+      response.send(error);
+    } else {
+      Sensor.findById(request.params.sensor_id, function(error, sensor) {
+        sensor.sensorData.push(sensorData);
+        sensor.save(function(error) {
+          if (error) {
+            response.send(error);
+          } else {
+            response.json({ message: 'Datos creados satisfactoriamente' });
+          }
+        });
+      });
+    }
+  });
+});
+
+router.delete('/remove_all', function(request, response) {
+  SensorData.remove({}, function(error, sensorData) {
+    console.log("removed");
+  });
+  Sensor.remove({}, function(error, sensor) {
+    console.log("removed");
+  });
+  Raspi.remove({}, function(error, raspi) {
+    console.log("remove");
+    response.send(raspi);
   });
 });
 

@@ -5,7 +5,7 @@ var sensorSchema = new Schema({
   pin: Number,
   sensorType: String,
   active: Boolean,
-  sensorsData: [{
+  sensorData: [{
     type: Schema.Types.ObjectId,
     ref: 'SensorData'
   }],

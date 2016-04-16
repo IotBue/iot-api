@@ -10,10 +10,6 @@ var sensorDataSchema = new Schema({
     type: Date,
     default: Date.now
   },
-  sensorId: {
-    type: Schema.Types.ObjectId,
-    ref: 'Sensor'
-  },
   createdAt: {
     type: Date,
     default: Date.now
